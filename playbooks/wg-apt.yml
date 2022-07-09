@@ -7,6 +7,7 @@
           name: wireguard
           state: present
           update_cache: true
-        become_user: true
+        become: yes
+        become_method: su
 
     
