@@ -1,10 +1,10 @@
 ---
   - name: set up wireguard server
-    hosts: wireguard
+    hosts: bind
     become: yes
     become_method: su
     tasks:
-      - name: wireguard
+      - name: bind
         apt: 
           name:
           - wireguard
@@ -15,11 +15,7 @@
       - name: copy keys and config files
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/etc/ansible/CDNLab/wireguard/ansible.pub', dest: '/etc/wireguard/ansible.pub'}
-          - { src: '/etc/ansible/CDNLab/wireguard/dns.pub', dest: '/etc/wireguard/dns.pub'}
-          - { src: '/etc/ansible/CDNLab/wireguard/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
-          #- { src: './wireguard/private.key', dest: '/etc/wireguar/private.pub'}
-          #- { src: './wireguard/public.key', dest: '/etc/wireguar/public.key'}
+          - { src: '/etc/ansible/CDNLab/bind/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
       
       - name: set wg-quick service persistent
         command: "{{item}}"
@@ -31,7 +27,7 @@
       - name: copy interfaces
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/etc/ansible/CDNLab/interfaces/wg-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
+          - { src: '/etc/ansible/CDNLab/interfaces/dns-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
           - { src: '/etc/ansible/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
       
       - name: copy resolve conf file
@@ -39,8 +35,4 @@
         with_items:
           - { src: '/etc/ansible/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
       
-      - name: copy sysctl.conf
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/etc/ansible/CDNLab/wireguard/sysctl.conf', dest: '/etc/sysctl.conf'}
     
