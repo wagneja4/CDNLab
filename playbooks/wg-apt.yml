@@ -1,6 +1,6 @@
 ---
   - name: install wireguard dependencies
-    hosts: "*"
+    hosts: "wireguard"
     tasks:
       - name: install dependencies
         apt: 
