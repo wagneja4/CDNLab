@@ -29,15 +29,15 @@
           - "systemctl start wg-quick@wg0"
       - name: copy interfaces
         copy: src={{ item.src}} dest={{item.dest}}
-          with_items:
+        with_items:
           - { src: './interfaces/dns-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
           - { src: './interfaces/common-interfaces', dest: '/etc/network/interfaces'}
       - name: copy resolve conf file
         copy: src={{ item.src}} dest={{item.dest}}
-          with_items:
+        with_items:
           - { src: './resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
       - name: copy sysctl.conf
         copy: src={{ item.src}} dest={{item.dest}}
-          with_items:
+        with_items:
           - { src: './wireguard/sysctl.conf', dest: '/etc/sysctl.conf'}
     
