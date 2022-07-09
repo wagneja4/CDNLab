@@ -12,7 +12,9 @@
         become: yes
         become_method: su
       - name: copy keys and config files
-        copy: src={{ item.src}} dest={{item.dest}}
+        copy: 
+        src: "{{item.src}}"
+        dest: "{{item.dest}}"
           with_items:
           - { src: './wireguard/ansible.pub', dest: '/etc/wireguard/ansible.pub'}
           - { src: './wireguard/dns.pub', dest: '/etc/wireguard/dns.pub'}
