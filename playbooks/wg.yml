@@ -11,6 +11,7 @@
           update_cache: true
         become: yes
         become_method: su
+
       - name: copy keys and config files
         copy: 
         src: "{{item.src}}"
@@ -21,21 +22,25 @@
           - { src: './wireguard/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
           #- { src: './wireguard/private.key', dest: '/etc/wireguar/private.pub'}
           #- { src: './wireguard/public.key', dest: '/etc/wireguar/public.key'}
+      
       - name: set wg-quick service persistent
         command: "{{item}}"
         loop:
           - "systemctl enable wg-quick@wg0.service"
           - "systemctl daemon-reload"
           - "systemctl start wg-quick@wg0"
+      
       - name: copy interfaces
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
           - { src: './interfaces/dns-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
           - { src: './interfaces/common-interfaces', dest: '/etc/network/interfaces'}
+      
       - name: copy resolve conf file
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
           - { src: './resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
+      
       - name: copy sysctl.conf
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
