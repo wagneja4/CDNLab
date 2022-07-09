@@ -1,11 +1,12 @@
-- name: install wireguard dependencies
-  hosts: "*"
-  tasks:
-    - name: install dependencies
-      apt: 
-        name: wireguard
-        state: present
-        update_cache: true
-      become: true
+---
+  - name: install wireguard dependencies
+    hosts: "*"
+    tasks:
+      - name: install dependencies
+        apt: 
+          name: wireguard
+          state: present
+          update_cache: true
+        become: true
 
-  
+    
