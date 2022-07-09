@@ -15,7 +15,7 @@
         copy: 
         src: "{{item.src}}"
         dest: "{{item.dest}}"
-          with_items:
+        with_items:
           - { src: './wireguard/ansible.pub', dest: '/etc/wireguard/ansible.pub'}
           - { src: './wireguard/dns.pub', dest: '/etc/wireguard/dns.pub'}
           - { src: './wireguard/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
