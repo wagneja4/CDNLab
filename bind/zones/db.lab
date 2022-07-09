@@ -1,0 +1,16 @@
+;
+; BIND data file for local loopback interface
+;
+$TTL	604800
+@	IN	SOA	master.lab. root.master.lab. (
+			      1		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+;@ORIGIN ns.lab.
+lab.	IN	NS	ns.lab.
+ns	IN	A	10.128.1.11
+monitor	IN	A	10.128.1.12
+wg	IN	a	10.128.1.10
