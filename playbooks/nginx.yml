@@ -42,8 +42,6 @@
           - { src: '/etc/ansible/CDNLab/nginx/nginx-site-config.nginx', dest: '/etc/nginx/sites-enabled/files-serve'}
 
       - name: restart nginx
-        command: "{{item}}"
-        loop:
-          - 'nginx -s reload' #
+        command: nginx -s reload
 
     
