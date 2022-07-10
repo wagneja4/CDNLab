@@ -1,6 +1,6 @@
 ---
-  - name: set up nginx server
-    hosts: nginx
+  - name: set up nginx proxy server
+    hosts: nginx-proxy
     become: yes
     become_method: su
     tasks:
@@ -16,7 +16,7 @@
       - name: copy keys and config files
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/etc/ansible/CDNLab/nginx/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
+          - { src: '/etc/ansible/CDNLab/nginx-proxy/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
       
       - name: set wg-quick service persistent
         command: "{{item}}"
@@ -28,7 +28,7 @@
       - name: copy interfaces
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/etc/ansible/CDNLab/interfaces/nginx-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
+          - { src: '/etc/ansible/CDNLab/interfaces/nginx-proxy-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
           - { src: '/etc/ansible/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
       
       - name: copy resolve conf file
