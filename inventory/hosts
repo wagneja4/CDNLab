@@ -14,8 +14,11 @@ wg.lab
 ns.lab
 [ansible]
 monitor.lab
-[nginx]
-nginx.lab
+[nginx-web]
+nginx-web.lab
+[nginx-proxy]
+nginx-proxy.lab
+
 # Ex 1: Ungrouped hosts, specify before any group headers:
 
 ## green.example.com

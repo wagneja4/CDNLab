@@ -42,6 +42,6 @@
           - { src: '/etc/ansible/CDNLab/nginx/nginx-site-config.nginx', dest: '/etc/nginx/sites-enabled/files-serve'}
 
       - name: restart nginx
-        command: nginx -s reload
+        command: nginx -s reload # errors out, why?
 
     
