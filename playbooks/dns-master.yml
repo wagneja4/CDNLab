@@ -35,4 +35,12 @@
         with_items:
           - { src: '/etc/ansible/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
       
+      - name: copy dns records
+        copy: src={{ item.src}} dest={{item.dest}}
+        with_items:
+          - { src: '/etc/ansible/CDNLab/bind/zones/db.lab', dest: '/etc/bind/zones/db.lab'}
+      - name: set wg-quick service persistent
+        command: "{{item}}"
+        loop:
+          - "systemctl restart named"
     
