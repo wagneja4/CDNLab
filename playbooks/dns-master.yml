@@ -39,7 +39,7 @@
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
           - { src: '/etc/ansible/CDNLab/bind/zones/db.lab', dest: '/etc/bind/zones/db.lab'}
-      - name: set wg-quick service persistent
+      - name: restart named for dns record update (its ok, we dont have secondary)
         command: "{{item}}"
         loop:
           - "systemctl restart named"
