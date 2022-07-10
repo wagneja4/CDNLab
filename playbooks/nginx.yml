@@ -39,7 +39,7 @@
       - name: copy local files serve conf
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/etc/ansible/CDNLab/nginx/nginx-site-config.nginx', dest: '/etc/nginx/sites-enabled/nginx-site-config.nginx'}
+          - { src: '/etc/ansible/CDNLab/nginx/nginx-site-config.nginx', dest: '/etc/nginx/sites-enabled/files-serve'}
 
       - name: restart nginx
         command: "{{item}}"
