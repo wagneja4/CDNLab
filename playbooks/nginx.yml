@@ -44,6 +44,6 @@
       - name: restart nginx
         command: "{{item}}"
         loop:
-          - nginx -s reload
+          - 'nginx -s reload' #
 
     
