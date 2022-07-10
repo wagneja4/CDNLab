@@ -1,0 +1,19 @@
+upstream web {
+
+	server nginx-web.lab;
+}
+
+server {
+
+	listen 80;
+
+	server_name nginx-proxy.lab;
+
+	proxy_cache web-cache;
+
+	location / {
+		
+		proxy_pass http://web;
+	}
+
+}
