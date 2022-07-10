@@ -14,3 +14,4 @@ lab.	IN	NS	ns.lab.
 ns	IN	A	10.128.1.11
 monitor	IN	A	10.128.1.12
 wg	IN	a	10.128.1.10
+nginx	IN	a	10.128.1.13

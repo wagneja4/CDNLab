@@ -1,21 +1,22 @@
 ---
-  - name: set up ansible server
-    hosts: ansible
+  - name: set up nginx server
+    hosts: nginx
     become: yes
     become_method: su
     tasks:
-      - name: wireguard and resolvconf install
+      - name: wireguard, resolvconf, nginx install
         apt: 
           name:
           - wireguard
           - resolvconf
+          - nginx
           state: present
           update_cache: true
 
       - name: copy keys and config files
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/etc/ansible/CDNLab/ansible/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
+          - { src: '/etc/ansible/CDNLab/nginx/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
       
       - name: set wg-quick service persistent
         command: "{{item}}"
@@ -27,12 +28,12 @@
       - name: copy interfaces
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/etc/ansible/CDNLab/interfaces/ansible-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
+          - { src: '/etc/ansible/CDNLab/interfaces/nginx-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
           - { src: '/etc/ansible/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
       
       - name: copy resolve conf file
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
           - { src: '/etc/ansible/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
-      
+
     
