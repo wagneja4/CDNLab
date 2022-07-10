@@ -12,7 +12,8 @@
 wg.lab
 [bind]
 ns.lab
-
+[ansible]
+monitor.lab
 # Ex 1: Ungrouped hosts, specify before any group headers:
 
 ## green.example.com
