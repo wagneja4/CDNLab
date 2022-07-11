@@ -13,11 +13,14 @@ wg.lab
 [bind]
 ns.lab
 [ansible]
-monitor.lab
+ansible.lab
 [nginx-web]
 nginx-web.lab
 [nginx-proxy]
 nginx-proxy.lab
+[prometheus]
+prometheus.lab
+
 
 # Ex 1: Ungrouped hosts, specify before any group headers:
 
