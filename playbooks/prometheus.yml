@@ -1,0 +1,39 @@
+---
+  - name: set up prometheus server
+    hosts: prometheus
+    become: yes
+    become_method: su
+    tasks:
+      - name: wireguard, resolvconf, nginx install
+        apt: 
+          name:
+          - wireguard
+          - resolvconf
+          state: present
+          update_cache: true
+
+      - name: copy keys and config files
+        copy: src={{ item.src}} dest={{item.dest}}
+        with_items:
+          - { src: '/etc/ansible/CDNLab/prometheus/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
+      
+      - name: set wg-quick service persistent
+        command: "{{item}}"
+        loop:
+          - "systemctl enable wg-quick@wg0.service"
+          - "systemctl daemon-reload"
+          - "systemctl start wg-quick@wg0"
+      
+      - name: copy interfaces
+        copy: src={{ item.src}} dest={{item.dest}}
+        with_items:
+          - { src: '/etc/ansible/CDNLab/interfaces/prometheus-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
+          - { src: '/etc/ansible/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
+      
+      - name: copy resolve conf file
+        copy: src={{ item.src}} dest={{item.dest}}
+        with_items:
+          - { src: '/etc/ansible/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
+
+
+    

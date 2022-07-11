@@ -1,0 +1,10 @@
+[Unit]
+Description= A prometheus monitoring service
+Type=simple
+ExecStart=/opt/prometheus/prometheus
+ExecStop=/bin/kill "$MAINPID"
+Restart=always
+User=prometheus
+After=network.target
+[Install]
+WantedBy=multi-user.target # network up?

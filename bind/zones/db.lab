@@ -16,3 +16,4 @@ ansible		IN	A	10.128.1.12
 wg			IN	A	10.128.1.10
 nginx-web	IN	A	10.128.1.13
 nginx-proxy	IN	A	10.128.1.14
+prometheus	IN	A	10.128.1.15
