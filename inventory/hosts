@@ -9,17 +9,15 @@
 #   - A hostname/ip can be a member of multiple groups
 
 [wireguard]
-wg.lab
+192.168.122.2
 [bind]
-ns.lab
-[ansible]
-ansible.lab
+192.168.122.3
 [nginx-web]
-nginx-web.lab
+192.168.122.5
 [nginx-proxy]
-nginx-proxy.lab
+192.168.122.6
 [prometheus]
-prometheus.lab
+192.168.122.7
 
 
 # Ex 1: Ungrouped hosts, specify before any group headers:
