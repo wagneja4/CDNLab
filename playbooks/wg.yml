@@ -9,38 +9,64 @@
           name:
           - wireguard
           - resolvconf
+          - git
+          - curl
+          - build-essential
           state: present
           update_cache: true
 
       - name: copy keys and config files
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/etc/ansible/CDNLab/wireguard/ansible.pub', dest: '/etc/wireguard/ansible.pub'}
-          - { src: '/etc/ansible/CDNLab/wireguard/dns.pub', dest: '/etc/wireguard/dns.pub'}
-          - { src: '/etc/ansible/CDNLab/wireguard/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
+          - { src: '/home/honza/Documents/CDNLab/wireguard/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
           #- { src: './wireguard/private.key', dest: '/etc/wireguar/private.pub'}
           #- { src: './wireguard/public.key', dest: '/etc/wireguar/public.key'}
-      
-      - name: set wg-quick service persistent
-        command: "{{item}}"
-        loop:
-          - "systemctl enable wg-quick@wg0.service"
-          - "systemctl daemon-reload"
-          - "systemctl start wg-quick@wg0"
+
+      - name: run a wireguard quick-up service
+        systemd:
+          name: wg-quick@wg0.service
+          state: started
+          enabled: yes
       
       - name: copy interfaces
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/etc/ansible/CDNLab/interfaces/wg-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
-          - { src: '/etc/ansible/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
+          - { src: '/home/honza/Documents/CDNLab/interfaces/wg-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
+          - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
       
       - name: copy resolve conf file
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/etc/ansible/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
+          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
       
-      - name: copy sysctl.conf
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/etc/ansible/CDNLab/wireguard/sysctl.conf', dest: '/etc/sysctl.conf'}
+      - name: set net.ipv4.ip_forward = 1 and reload
+        value: '1'
+        sysctl_set: yes
+        state: present
+        reload: yes
+
+      - name: run rust instalation script
+        script: /home/honza/Documents/CDNLab/wireguard/rustup-init.sh -y
+
+      - name: Get wireguard exporter
+        git:
+          repo: https://github.com/MindFlavor/prometheus_wireguard_exporter.git
+          dest: /opt/prometheus_wireguard_exporter
+          single_branch: yes
+          version: master
+
+      - name: source cargo and compile exporter 
+        shell: cargo install --path /opt/prometheus_wireguard_exporter
+
+      - name: Adding user for prometheus wg exporter
+        user:
+          name: wg_exporter
+          shell: /bin/nologin
+
+      - name: Change
+        file:
+          path: /opt/prometheus_wireguard_exporter
+          owner: wg_exporter
+          group: wg_exporter
+          recurse: yes
     

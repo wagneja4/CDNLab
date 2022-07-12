@@ -16,7 +16,7 @@
       - name: copy keys and config files
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/etc/ansible/CDNLab/nginx-proxy/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
+          - { src: '/home/honza/Documents/CDNLab/nginx-proxy/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
       
       - name: set wg-quick service persistent
         command: "{{item}}"
@@ -28,18 +28,18 @@
       - name: copy interfaces
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/etc/ansible/CDNLab/interfaces/nginx-proxy-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
-          - { src: '/etc/ansible/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
+          - { src: '/home/honza/Documents/CDNLab/interfaces/nginx-proxy-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
+          - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
       
       - name: copy resolve conf file
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/etc/ansible/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
+          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
 
       - name: copy local files serve conf
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/etc/ansible/CDNLab/nginx/nginx-site-config.nginx', dest: '/etc/nginx/sites-enabled/files-serve'}
+          - { src: '/home/honza/Documents/CDNLab/nginx-proxy/nginx-site-config.nginx', dest: '/etc/nginx/sites-enabled/files-serve'}
 
       - name: restart nginx
         command: nginx -s reload # errors out, why?

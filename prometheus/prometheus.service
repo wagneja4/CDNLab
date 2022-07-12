@@ -1,10 +1,11 @@
 [Unit]
-Description= A prometheus monitoring service
-Type=simple
-ExecStart=/opt/prometheus/prometheus
+Description= a prometheus monitoring service
+After=network.target
+[Service]
+ExecStart=/opt/prometheus/prometheus --config.file=/opt/prometheus/prometheus.yml --storage.tsdb.path=/opt/prometheus/
 ExecStop=/bin/kill "$MAINPID"
+Type=simple
 Restart=always
 User=prometheus
-After=network.target
 [Install]
-WantedBy=multi-user.target # network up?
+WantedBy=multi-user.target
