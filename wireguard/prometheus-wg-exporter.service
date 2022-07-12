@@ -6,6 +6,6 @@ ExecStart=/opt/prometheus_wireguard_exporter/target/release/prometheus_wireguard
 ExecStop=/bin/kill "$MAINPID"
 Type=simple
 Restart=always
-User=prometheus
+User=wg_exporter
 [Install]
 WantedBy=multi-user.target

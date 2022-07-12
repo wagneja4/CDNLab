@@ -39,11 +39,12 @@
         with_items:
           - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
       
-      - name: set net.ipv4.ip_forward = 1 and reload
-        value: '1'
-        sysctl_set: yes
-        state: present
-        reload: yes
+      - ansible.posix.sysctl:
+          name: net.ipv4.ip_forward
+          value: '1'
+          sysctl_set: yes
+          state: present
+          reload: yes
 
       - name: run rust instalation script
         script: /home/honza/Documents/CDNLab/wireguard/rustup-init.sh -y
@@ -61,12 +62,23 @@
       - name: Adding user for prometheus wg exporter
         user:
           name: wg_exporter
-          shell: /bin/nologin
+          shell: /sbin/nologin
 
-      - name: Change
+      - name: change ownership of exporter files
         file:
           path: /opt/prometheus_wireguard_exporter
           owner: wg_exporter
           group: wg_exporter
           recurse: yes
-    
+
+      - name: copy exporter service file
+        copy: src={{ item.src}} dest={{item.dest}}
+        with_items:
+          - { src: '/home/honza/Documents/CDNLab/wireguard/prometheus-wg-exporter.service', dest: '/etc/systemd/system/prom-wg-exporter.service'}
+
+      - name: run a prometheus exporter for wireguard
+        systemd:
+          name: prom-wg-exporter.service
+          state: started
+          enabled: yes
+          daemon_reload: yes

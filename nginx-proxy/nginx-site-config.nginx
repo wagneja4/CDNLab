@@ -24,4 +24,10 @@ server {
 		root /data/images;
 		autoindex on;
 	}
+	#https://github.com/nginxinc/nginx-prometheus-exporter
+	location /stub_status {
+		stub_status;
+		allow 127.0.0.1;
+		deny all;
+	}
 }

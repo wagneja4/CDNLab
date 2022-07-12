@@ -18,12 +18,11 @@
         with_items:
           - { src: '/home/honza/Documents/CDNLab/nginx-web/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
       
-      - name: set wg-quick service persistent
-        command: "{{item}}"
-        loop:
-          - "systemctl enable wg-quick@wg0.service"
-          - "systemctl daemon-reload"
-          - "systemctl start wg-quick@wg0"
+      - name: run a wireguard quick-up service
+        systemd:
+          name: wg-quick@wg0.service
+          state: started
+          enabled: yes
       
       - name: copy interfaces
         copy: src={{ item.src}} dest={{item.dest}}

@@ -18,12 +18,11 @@
         with_items:
           - { src: '/home/honza/Documents/CDNLab/nginx-proxy/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
       
-      - name: set wg-quick service persistent
-        command: "{{item}}"
-        loop:
-          - "systemctl enable wg-quick@wg0.service"
-          - "systemctl daemon-reload"
-          - "systemctl start wg-quick@wg0"
+      - name: run a wireguard quick-up service
+        systemd:
+          name: wg-quick@wg0.service
+          state: started
+          enabled: yes
       
       - name: copy interfaces
         copy: src={{ item.src}} dest={{item.dest}}
@@ -36,10 +35,15 @@
         with_items:
           - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
 
-      - name: copy local files serve conf
+      - name: make /opt/nginx dir
+        ansible.builtin.file:
+          path: /opt/nginx
+          state: directory
+
+      - name: copy nginx exporter
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/home/honza/Documents/CDNLab/nginx-proxy/nginx-site-config.nginx', dest: '/etc/nginx/sites-enabled/files-serve'}
+          - { src: '/home/honza/Documents/CDNLab/nginx-web/nginx-prometheus-exporter', dest: '/opt/nginx/nginx-prom-export'}
 
       - name: restart nginx
         command: nginx -s reload # errors out, why?
