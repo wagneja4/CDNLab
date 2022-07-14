@@ -1,23 +1,18 @@
-- hosts: wireguard-node
-  name: set up wireguard
-  become: yes
-  become_method: su
-  tasks:
+---
+  - name: install wireguard
+    apt: 
+      name:
+      - wireguard
+      state: present
+      update_cache: true
 
-      - name: install resolvconf
-        apt: 
-          name:
-          - wireguard
-          state: present
-          update_cache: true
+  - name: copy wg config files
+    copy: src={{ item.src}} dest={{item.dest}}
+    with_items:
+      - { src: "{{root_dir}}/{{instanceName}}/wg0.conf", dest: '/etc/wireguard/wg0.conf'}
 
-      - name: copy config files
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/kafka/{{dirName}}/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
-
-      - name: run a wireguard quick-up service
-        systemd:
-          name: wg-quick@wg0.service
-          state: restarted
-          enabled: yes
+  - name: run a wireguard quick-up service
+    systemd:
+      name: wg-quick@wg0.service
+      state: restarted
+      enabled: yes

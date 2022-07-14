@@ -2,8 +2,8 @@
 Description= a kafka cluster node service
 After=network.target
 [Service]
-ExecStart=/opt/kafka/bin/kafka-server-start.sh  /opt/kafka/config/server.properties
-ExecStop=/opt/kafka/bin/kafka-server-stop.sh
+ExecStart=/opt/kafka_2.13-3.2.0/bin/kafka-server-start.sh  /opt/kafka/config/server.properties
+ExecStop=/opt/kafka_2.13-3.2.0/bin/kafka-server-stop.sh
 Type=simple
 User=kafka
 [Install]

@@ -4,61 +4,11 @@
     become: yes
     become_method: su
     tasks:
-      - name: copy interfaces
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/interfaces/{{dirName}}-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
-          - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
-
-      - name: wireguard, resolvconf
-        apt: 
-          name:
-          - wireguard
-          - resolvconf
-          - default-jdk
-          state: present
-          update_cache: true
-
-      - name: copy keys and config files
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/kafka/{{dirName}}/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
-      
-      - name: run a wireguard quick-up service
-        systemd:
-          name: wg-quick@wg0.service
-          state: restarted
-          enabled: yes
-      
-      - name: copy resolve conf file
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve.base', dest: '/etc/resolvconf/resolv.conf.d/base'}
-          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve.head', dest: '/etc/resolvconf/resolv.conf.d/head'}
-        notify:
-          - Reload resolv.conf
-
-      - name: copy kafka binaries
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/kafka/kafka_2.13-3.2.0/', dest: '/opt/kafka'}
-          
-      - name: Inline broker id
-        lineinfile:
-          path: /opt/kafka/config/server.properties
-          regexp: '^broker.id='
-          line: broker.id={{brokerId}}
-
-      - name: Inline zookeeper ip
-        lineinfile:
-          path: /opt/kafka/config/server.properties
-          regexp: '^zookeeper.connect='
-          line: zookeeper.connect={{zookeeperIP}}:2181
-
-      - name: copy kafka services
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/kafka/kafka.service', dest: '/etc/systemd/system/kafka.service'}
+    
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/interfaces-task.yml"
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/resolvconf-task.yml"
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/wireguard-task.yml"
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/unarchive-kafka-task.yml"
 
       - name: Adding user for kafka
         user:
@@ -73,14 +23,26 @@
           mode: '775'
           recurse: yes
 
+      - name: Inline broker id
+        lineinfile:
+          path: /opt/kafka_2.13-3.2.0/config/server.properties
+          regexp: '^broker.id='
+          line: broker.id={{brokerId}}
+
+      - name: Inline zookeeper IP
+        lineinfile:
+          path: /opt/kafka_2.13-3.2.0/config/server.properties
+          regexp: '^zookeeper.connect='
+          line: zookeeper.connect={{zookeeperIP}}:2181
+
+      - name: copy kafka services
+        copy: src={{ item.src}} dest={{item.dest}}
+        with_items:
+          - { src: "{{ root_dir }}/kafka/kafka.service", dest: '/etc/systemd/system/kafka.service'}
+
       - name: enable and restart kafka service
         systemd:
           name: kafka.service
           state: restarted
           enabled: yes
           daemon_reload: yes
-
-    handlers:
-      - name: Reload resolv.conf
-        shell: resolvconf -u
-        #why broken?

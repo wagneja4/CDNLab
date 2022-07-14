@@ -1,2 +1,6 @@
-notifies for rebooting/reloading etc
-including playbooks + variables?
+sanitize repository
+add readme and comments
+implement the last subtask, logging
+add pictures download to nginx local dir serve
+rewrite interfaces for dhcp..? (dns problem..)
+review

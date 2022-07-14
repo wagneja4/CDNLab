@@ -4,30 +4,23 @@
     become: yes
     become_method: su
     tasks:
-      
-      - name: copy interfaces
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/interfaces/wg-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
-          - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
-      
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/interfaces-task.yml"
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/resolvconf-task.yml"
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/wireguard-task.yml"
+
       - name: wireguard and resolvconf install
         apt: 
           name:
-          - wireguard
-          - resolvconf
           - git
           - curl
           - build-essential
           state: present
           update_cache: true
 
-      - name: copy keys and config files
+      - name: copy wg config file
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/home/honza/Documents/CDNLab/wireguard/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
-          #- { src: './wireguard/private.key', dest: '/etc/wireguar/private.pub'}
-          #- { src: './wireguard/public.key', dest: '/etc/wireguar/public.key'}
+          - { src: "{{ root_dir }}/wireguard/wg0.conf", dest: '/etc/wireguard/wg0.conf'}
 
       - name: run a wireguard quick-up service
         systemd:
@@ -35,23 +28,23 @@
           state: restarted
           enabled: yes
 
-      - name: copy resolve conf file
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve.base', dest: '/etc/resolvconf/resolv.conf.d/base'}
-          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve.head', dest: '/etc/resolvconf/resolv.conf.d/head'}
-        notify:
-          - Reload resolv.conf
-
-      - ansible.posix.sysctl:
+      - name: set forwarding to 1
+        ansible.posix.sysctl:
           name: net.ipv4.ip_forward
           value: '1'
           sysctl_set: yes
           state: present
           reload: yes
 
-      - name: run rust instalation script
-        script: /home/honza/Documents/CDNLab/wireguard/rustup-init.sh -y
+      - name: Download rust installer
+        get_url:
+          url: https://sh.rustup.rs
+          dest: /tmp/sh.rustup.rs
+          mode: '0755'
+          force: 'yes'
+
+      - name: install rust/cargo
+        shell: /tmp/sh.rustup.rs -y
 
       - name: Get wireguard exporter
         git:
@@ -78,7 +71,7 @@
       - name: copy exporter service file
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/home/honza/Documents/CDNLab/wireguard/prometheus-wg-exporter.service', dest: '/etc/systemd/system/prom-wg-exporter.service'}
+          - { src: "{{ root_dir }}/wireguard/prometheus-wg-exporter.service", dest: '/etc/systemd/system/prom-wg-exporter.service'}
 
       - name: run a prometheus exporter for wireguard
         systemd:
@@ -86,3 +79,4 @@
           state: started
           enabled: yes
           daemon_reload: yes
+          

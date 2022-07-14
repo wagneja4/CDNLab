@@ -1,25 +1,18 @@
-[all]
-192.168.122.2
-192.168.122.3
-192.168.122.4
-192.168.122.6
-192.168.122.7
-192.168.122.8
 [wireguard]
-192.168.122.2
+192.168.122.99 instanceName=wireguard
 [bind]
-192.168.122.3
+192.168.122.8 instanceName=bind
 [nginx-web]
-192.168.122.5
+192.168.122.149 instanceName=nginx-web
 [nginx-proxy]
-192.168.122.6
+192.168.122.154 instanceName=nginx-proxy
 [prometheus]
-192.168.122.7
+192.168.122.82 instanceName=prometheus
 [zookeeper]
-192.168.122.8 zookeeperIP=localhost
+192.168.122.172 instanceName=kafka1 zookeeperIP=localhost
 
 [kafka]
-192.168.122.8 brokerId=0 zookeeperIP=192.168.122.8 dirName=kafka1
-192.168.122.106 brokerId=1 zookeeperIP=192.168.122.8 dirName=kafka2
-192.168.122.94 brokerId=2 zookeeperIP=192.168.122.8 dirName=kafka3
+192.168.122.172 brokerId=0 zookeeperIP=192.168.122.172 instanceName=kafka1
+192.168.122.179 brokerId=1 zookeeperIP=192.168.122.172 instanceName=kafka2
+192.168.122.249 brokerId=2 zookeeperIP=192.168.122.172 instanceName=kafka3
 

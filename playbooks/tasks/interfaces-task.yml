@@ -1,12 +1,8 @@
-- hosts: all
-  name: set up interfaces
-  become: yes
-  become_method: su
-  tasks:
+---
+  - name: copy interfaces
+    copy: src={{ item.src}} dest={{item.dest}}
+    with_items:
+      - { src: "{{root_dir}}/interfaces/{{instanceName}}-enp1s0", dest: '/etc/network/interfaces.d/enp1s0'}
+      - { src: "{{root_dir}}/interfaces/common-interfaces", dest: '/etc/network/interfaces'}
 
-    - name: copy interface config files
-      copy: src={{ item.src}} dest={{item.dest}}
-      with_items:
-        - { src: '/home/honza/Documents/CDNLab/interfaces/{{dirName}}-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
-        - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
 

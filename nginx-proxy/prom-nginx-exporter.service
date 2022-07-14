@@ -2,7 +2,7 @@
 Description= a prometheus exporter for nginx
 After=network.target
 [Service]
-ExecStart=/opt/nginx/nginx-prom-export
+ExecStart=/opt/nginx/nginx-prometheus-exporter
 ExecStop=/bin/kill "$MAINPID"
 Type=simple
 Restart=always

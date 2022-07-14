@@ -4,42 +4,33 @@
     become: yes
     become_method: su
     tasks:
-      - name: wireguard and resolvconf install
+    
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/interfaces-task.yml"
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/resolvconf-task.yml"
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/wireguard-task.yml"
+
+      - name: installs bind
         apt: 
           name:
-          - wireguard
-          - resolvconf
+          - bind9
           state: present
           update_cache: true
 
-      - name: copy keys and config files
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/bind/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
-      
-      - name: run a wireguard quick-up service
-        systemd:
-          name: wg-quick@wg0.service
-          state: started
-          enabled: yes
-      
-      - name: copy interfaces
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/interfaces/dns-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
-          - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
-      
+      - name: Create zones dir
+        file: 
+          path: /etc/bind/zones
+          state: directory
+
       - name: copy resolve conf file
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
-      
-      - name: copy dns records
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/bind/zones/db.lab', dest: '/etc/bind/zones/db.lab'}
+          - { src: "{{ root_dir }}/bind/named.conf.local", dest: '/etc/bind/named.conf.local'}
+          - { src: "{{ root_dir }}/bind/named.conf.options", dest: '/etc/bind/zones/named.conf.options'}
+          - { src: "{{ root_dir }}/bind/zones/db.lab", dest: '/etc/bind/zones/db.lab'}
+
       - name: restart named for dns record update (its ok, we dont have secondary)
         command: "{{item}}"
         loop:
           - "systemctl restart named"
+
     

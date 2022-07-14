@@ -1,0 +1,25 @@
+---
+  - name: install tar for unarchive, install jdk for kafka
+    apt: 
+      name:
+      - tar
+      state: present
+      update_cache: true
+
+  - name: Download kafka
+    get_url:
+      url: 'https://dlcdn.apache.org/kafka/3.2.0/kafka_2.13-3.2.0.tgz'
+      dest: /tmp
+      mode: '0755'
+      force: no
+
+  - name: Create /opt/kafka dir
+    file: 
+      path: /opt/kafka
+      state: directory
+
+  - name: transport and unarchive kafka
+    unarchive:
+      src: "/tmp/kafka_2.13-3.2.0.tgz"
+      remote_src: yes
+      dest: /opt

@@ -1,17 +1,23 @@
-- hosts: all
-  name: set up resolvconf
-  become: yes
-  become_method: su
-  tasks:
-    - name: copy interface config files
-      copy: src={{ item.src}} dest={{item.dest}}
-      with_items:
-        - { src: '/home/honza/Documents/CDNLab/interfaces/{{dirName}}-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
-        - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
+---
+  - name: intall resolvconf
+    apt: 
+      name:
+      - resolvconf
+      state: present
+      update_cache: true
 
-      - name: install resolvconf
-        apt: 
-          name:
-          - resolvconf
-          state: present
-          update_cache: true
+  - name: copy resolve conf file
+    copy: src={{ item.src}} dest={{item.dest}}
+    with_items:
+      - { src: "{{root_dir}}/resolvconf/common-resolve.base", dest: '/etc/resolvconf/resolv.conf.d/base'}
+      - { src: "{{root_dir}}/resolvconf/common-resolve.head", dest: '/etc/resolvconf/resolv.conf.d/head'}
+
+  - name: Create a symbolic link /etc/resolv.conf -> /run/resolvconf/resolv.conf
+    file:
+      src: /run/resolvconf/resolv.conf
+      dest: /etc/resolv.conf
+      state: link
+      force: yes
+
+  - name: reload resolvconf
+    shell: /usr/sbin/resolvconf -u

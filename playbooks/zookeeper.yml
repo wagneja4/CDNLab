@@ -4,52 +4,16 @@
     become: yes
     become_method: su
     tasks:
-
-      - name: copy interfaces
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/interfaces/{{dirName}}-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
-          - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
-      
-      - name: wireguard, resolvconf
-        apt: 
-          name:
-          - wireguard
-          - resolvconf
-          - default-jdk
-          state: present
-          update_cache: true
-
-      - name: copy wg config file
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/kafka/{{dirName}}/wg0.conf', dest: '/etc/wireguard/wg0.conf'}
-      
-      - name: run a wireguard quick-up service
-        systemd:
-          name: wg-quick@wg0.service
-          state: started
-          enabled: yes
-
-      - name: copy resolve conf file
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve.base', dest: '/etc/resolvconf/resolv.conf.d/base'}
-          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve.head', dest: '/etc/resolvconf/resolv.conf.d/head'}
-        notify:
-          - Reload resolv.conf
-
-      - name: copy kafka binaries
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/kafka/kafka_2.13-3.2.0/', dest: '/opt/kafka'}
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/interfaces-task.yml"
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/resolvconf-task.yml"
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/unarchive-kafka-task.yml"
 
       - name: copy zookeeper services
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/home/honza/Documents/CDNLab/kafka/zookeeper.service', dest: '/etc/systemd/system/zookeeper.service'}
+          - { src: "{{ root_dir }}/kafka/zookeeper.service", dest: '/etc/systemd/system/zookeeper.service'}
 
-      - name: Adding user for kafka
+      - name: Adding user for kafka (for group)
         user:
           name: kafka
           shell: /sbin/nologin
@@ -61,16 +25,10 @@
           groups: kafka
           shell: /sbin/nologin
 
-      - name: enable and restart prometheus service
+      - name: enable and restart zookeeper service
         systemd:
           name: zookeeper.service
           state: restarted
           enabled: yes
           daemon_reload: yes
           
-    handlers:
-      - name: Reload resolv.conf
-        systemd:
-          name: resolvconf.service
-          state: restarted
-          enabled: yes

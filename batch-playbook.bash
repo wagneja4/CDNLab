@@ -1,7 +1,8 @@
 #!/bin/bash
 # --ask-become-pass
-ansible-playbook ./playbooks/dns-master.yml -i ./inventory/hosts --user ansible --ask-pass --ask-become-pass
-ansible-playbook ./playbooks/wg.yml -i ./inventory/hosts --user ansible --ask-pass --ask-become-pass
-ansible-playbook ./playbooks/nginx-web.yml -i ./inventory/hosts --user ansible --ask-pass --ask-become-pass
-ansible-playbook ./playbooks/nginx-proxy.yml -i ./inventory/hosts --user ansible --ask-pass --ask-become-pass
-ansible-playbook ./playbooks/prometheus.yml -i ./inventory/hosts --user ansible --ask-pass --ask-become-pass
+USER_NAME=user
+INVENTORY_PATH=./inventory/hosts
+for PLAYBOOK in dns-master.yml wg.yml nginx-web.yml nginx-proxy.yml prometheus.yml zookeeper.yml kafka.yml
+do
+    ansible-playbook ./playbooks/$PLAYBOOK -i $INVENTORY_PATH --user $USER_NAME --ask-pass --ask-become-pass --extra-vars "root_dir=$(pwd)"
+done
