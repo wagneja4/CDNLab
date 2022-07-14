@@ -4,6 +4,13 @@
     become: yes
     become_method: su
     tasks:
+    
+      - name: copy interfaces
+        copy: src={{ item.src}} dest={{item.dest}}
+        with_items:
+          - { src: '/home/honza/Documents/CDNLab/interfaces/nginx-proxy-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
+          - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
+      
       - name: wireguard, resolvconf, nginx install
         apt: 
           name:
@@ -24,28 +31,55 @@
           state: started
           enabled: yes
       
-      - name: copy interfaces
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/interfaces/nginx-proxy-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
-          - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
-      
       - name: copy resolve conf file
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
+          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve.base', dest: '/etc/resolvconf/resolv.conf.d/base'}
+          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve.head', dest: '/etc/resolvconf/resolv.conf.d/head'}
+        notify:
+          - Reload resolv.conf
 
       - name: make /opt/nginx dir
         ansible.builtin.file:
           path: /opt/nginx
           state: directory
 
+      - name: copy local files serve conf
+        copy: src={{ item.src}} dest={{item.dest}}
+        with_items:
+          - { src: '/home/honza/Documents/CDNLab/nginx-proxy/nginx-proxy-config.nginx', dest: '/etc/nginx/sites-enabled/proxy-site'}
+ 
+      - name: run a wireguard quick-up service
+        systemd:
+          name: nginx.service
+          state: restarted
+          enabled: yes
+
       - name: copy nginx exporter
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
           - { src: '/home/honza/Documents/CDNLab/nginx-web/nginx-prometheus-exporter', dest: '/opt/nginx/nginx-prom-export'}
+ 
+      - name: Adding user for prometheus wg exporter
+        user:
+          name: wg_exporter
+          shell: /sbin/nologin
 
-      - name: restart nginx
-        command: nginx -s reload # errors out, why?
+      - name: change ownership of exporter files
+        file:
+          path: /opt/nginx
+          owner: wg_exporter
+          group: wg_exporter
+          recurse: yes
 
-    
+      - name: copy exporter service file
+        copy: src={{ item.src}} dest={{item.dest}}
+        with_items:
+          - { src: '/home/honza/Documents/CDNLab/nginx-proxy/prom-nginx-exporter.service', dest: '/etc/systemd/system/prom-nginx-exporter.service'}
+ 
+      - name: run a prometheus exporter for nginx
+        systemd:
+          name: prom-nginx-exporter.service
+          state: started
+          enabled: yes
+          daemon_reload: yes

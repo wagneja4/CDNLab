@@ -4,6 +4,13 @@
     become: yes
     become_method: su
     tasks:
+
+      - name: copy interfaces
+        copy: src={{ item.src}} dest={{item.dest}}
+        with_items:
+          - { src: '/home/honza/Documents/CDNLab/interfaces/prometheus-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
+          - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
+
       - name: wireguard, resolvconf, nginx install
         apt: 
           name:
@@ -23,27 +30,32 @@
           state: started
           enabled: yes
       
-      - name: copy interfaces
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/interfaces/prometheus-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
-          - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
-      
       - name: copy resolve conf file
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
-      
+          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve.base', dest: '/etc/resolvconf/resolv.conf.d/base'}
+          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve.head', dest: '/etc/resolvconf/resolv.conf.d/head'}
+        notify:
+          - Reload resolv.conf
+
       - name: copy systemd service unit file and related files
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
           - { src: '/home/honza/Documents/CDNLab/prometheus/prometheus.service', dest: '/etc/systemd/system/prometheus.service'}
           - { src: '/home/honza/Documents/CDNLab/prometheus/prometheus-config.yml', dest: '/opt/prometheus/prometheus.yml'}
 
+      - name: Adding user for prometheus
+        user:
+          name: prometheus
+          shell: /sbin/nologin
+
       - name: enable and restart prometheus service
-        command: "{{item}}"
-        loop:
-          - "systemctl daemon-reload"
-          - "systemctl enable prometheus"
-          - "systemctl restart prometheus"
-    
+        systemd:
+          name: prometheus.service
+          state: started
+          enabled: yes
+          daemon_reload: yes
+    handlers:
+      - name: Reload resolv.conf
+        shell: resolvconf -u
+        #why broken?

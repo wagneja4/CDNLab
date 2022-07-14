@@ -1,0 +1,4 @@
+auto enp1s0
+iface enp1s0 inet static
+    address 192.168.122.9/24
+    gateway 192.168.122.1

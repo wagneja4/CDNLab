@@ -2,7 +2,7 @@
 Description= a prometheus exporter for wireguard 
 After=network.target
 [Service]
-ExecStart=/opt/prometheus_wireguard_exporter/target/release/prometheus_wireguard_exporter
+ExecStart=/opt/prometheus_wireguard_exporter/target/release/prometheus_wireguard_exporter -i wg0
 ExecStop=/bin/kill "$MAINPID"
 Type=simple
 Restart=always

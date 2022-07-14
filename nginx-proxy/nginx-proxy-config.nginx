@@ -1,0 +1,19 @@
+server {
+	server_name _;
+	listen 80;
+	location / {
+
+		root /data/images;
+		autoindex on;
+	}
+}
+
+server {
+	server_name _;
+	listen 8080;
+
+	#https://github.com/nginxinc/nginx-prometheus-exporter
+	location /stub_status {
+		stub_status;
+	}
+}

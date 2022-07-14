@@ -4,6 +4,13 @@
     become: yes
     become_method: su
     tasks:
+
+      - name: copy interfaces
+        copy: src={{ item.src}} dest={{item.dest}}
+        with_items:
+          - { src: '/home/honza/Documents/CDNLab/interfaces/nginx-web-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
+          - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
+      
       - name: wireguard, resolvconf, nginx install
         apt: 
           name:
@@ -24,23 +31,27 @@
           state: started
           enabled: yes
       
-      - name: copy interfaces
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/interfaces/nginx-web-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
-          - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
-      
       - name: copy resolve conf file
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
+          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve.base', dest: '/etc/resolvconf/resolv.conf.d/base'}
+          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve.head', dest: '/etc/resolvconf/resolv.conf.d/head'}
+        notify:
+          - Reload resolv.conf
 
       - name: copy local files serve conf
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
           - { src: '/home/honza/Documents/CDNLab/nginx-web/nginx-site-config.nginx', dest: '/etc/nginx/sites-enabled/files-serve'}
 
-      - name: restart nginx
-        command: nginx -s reload # errors out, why?
+      - name: run a wireguard quick-up service
+        systemd:
+          name: nginx.service
+          state: restarted
+          enabled: yes
 
+    handlers:
+      - name: Reload resolv.conf
+        shell: resolvconf -u
+        #why broken?
     

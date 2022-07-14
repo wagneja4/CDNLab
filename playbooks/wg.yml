@@ -4,6 +4,13 @@
     become: yes
     become_method: su
     tasks:
+      
+      - name: copy interfaces
+        copy: src={{ item.src}} dest={{item.dest}}
+        with_items:
+          - { src: '/home/honza/Documents/CDNLab/interfaces/wg-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
+          - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
+      
       - name: wireguard and resolvconf install
         apt: 
           name:
@@ -25,20 +32,17 @@
       - name: run a wireguard quick-up service
         systemd:
           name: wg-quick@wg0.service
-          state: started
+          state: restarted
           enabled: yes
-      
-      - name: copy interfaces
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: '/home/honza/Documents/CDNLab/interfaces/wg-enp1s0', dest: '/etc/network/interfaces.d/enp1s0'}
-          - { src: '/home/honza/Documents/CDNLab/interfaces/common-interfaces', dest: '/etc/network/interfaces'}
-      
+
       - name: copy resolve conf file
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve', dest: '/etc/resolvconf/resolv.conf.d/base'}
-      
+          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve.base', dest: '/etc/resolvconf/resolv.conf.d/base'}
+          - { src: '/home/honza/Documents/CDNLab/resolvconf/common-resolve.head', dest: '/etc/resolvconf/resolv.conf.d/head'}
+        notify:
+          - Reload resolv.conf
+
       - ansible.posix.sysctl:
           name: net.ipv4.ip_forward
           value: '1'
@@ -56,7 +60,7 @@
           single_branch: yes
           version: master
 
-      - name: source cargo and compile exporter 
+      - name: compile exporter 
         shell: cargo install --path /opt/prometheus_wireguard_exporter
 
       - name: Adding user for prometheus wg exporter

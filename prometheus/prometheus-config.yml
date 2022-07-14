@@ -22,12 +22,16 @@ rule_files:
 # Here it's Prometheus itself.
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  - job_name: "prometheus"
-
-    # metrics_path defaults to '/metrics'
-    # scheme defaults to 'http'.
+  - job_name: "wireguard"
 
     static_configs:
       - targets: 
         - wg.lab:9586
+    metrics_path: /metrics
+
+  - job_name: "nginx"
+
+    static_configs:
+      - targets: 
+        - nginx-proxy.lab:9113
     metrics_path: /metrics
