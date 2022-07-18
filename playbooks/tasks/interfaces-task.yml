@@ -1,8 +1,6 @@
 ---
   - name: copy interfaces
-    copy: src={{ item.src}} dest={{item.dest}}
-    with_items:
-      - { src: "{{root_dir}}/interfaces/{{instanceName}}-enp1s0", dest: '/etc/network/interfaces.d/enp1s0'}
-      - { src: "{{root_dir}}/interfaces/common-interfaces", dest: '/etc/network/interfaces'}
-
-
+    copy: src={{item.src}} dest={{item.dest}}
+    loop:
+      - { src: "{{root_dir}}/interfaces/{{instanceName}}-enp1s0", dest: '/etc/network/interfaces.d/enp1s0' }
+      - { src: "{{root_dir}}/interfaces/common-interfaces", dest: '/etc/network/interfaces' }

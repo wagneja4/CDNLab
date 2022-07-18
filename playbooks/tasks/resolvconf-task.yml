@@ -6,7 +6,7 @@
       state: present
       update_cache: true
 
-  - name: copy resolve conf file
+  - name: copy resolve conf file, and service file
     copy: src={{ item.src}} dest={{item.dest}}
     with_items:
       - { src: "{{root_dir}}/resolvconf/common-resolve.base", dest: '/etc/resolvconf/resolv.conf.d/base'}
@@ -19,5 +19,5 @@
       state: link
       force: yes
 
-  - name: reload resolvconf
+  - name: reload resolv.conf
     shell: /usr/sbin/resolvconf -u

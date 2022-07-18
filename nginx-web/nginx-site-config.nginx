@@ -2,7 +2,8 @@ server {
 	listen 80;
 
 	server_name _;
-
+	allow 10.128.1.14; # should be domain main, unfortunatly nginx doesnt support that
+	deny all;
 	location / {
 
 		root /data/images;

@@ -1,7 +1,7 @@
 ---
   - name: set up nginx proxy server
     hosts: nginx-proxy
-    become: yes
+    become: true
     become_method: su
     tasks:
 
@@ -19,13 +19,15 @@
       - name: copy local files serve conf
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
-          - { src: "{{ root_dir }}/nginx-proxy/nginx-proxy-config.nginx", dest: '/etc/nginx/sites-enabled/proxy-site'}
+          - { src: "{{ root_dir }}/nginx-proxy/nginx-proxy-site.nginx", dest: '/etc/nginx/sites-enabled/proxy-site'}
  
-      - name: run a wireguard quick-up service
-        systemd:
-          name: nginx.service
-          state: restarted
-          enabled: yes
+      - name: Delate default site
+        file: 
+          path: /etc/nginx/sites-enabled/default
+          state: absent
+
+      - name: reload nginx
+        shell: /usr/sbin/nginx -s reload
           
       - name: make /opt/nginx dir
         ansible.builtin.file:

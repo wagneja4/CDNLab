@@ -1,7 +1,7 @@
 ---
   - name: set up kafka server
     hosts: kafka
-    become: yes
+    become: true
     become_method: su
     tasks:
     

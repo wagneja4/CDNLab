@@ -1,11 +1,19 @@
-server {
-	server_name _;
-	listen 80;
-	location / {
+upstream web {
 
-		root /data/images;
-		autoindex on;
+	server nginx-web.lab;
+}
+
+server {
+
+	listen 80;
+
+	server_name nginx-proxy.lab;
+
+	location / {
+		
+		proxy_pass http://web;
 	}
+
 }
 
 server {

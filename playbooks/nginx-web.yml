@@ -1,7 +1,7 @@
 ---
   - name: set up nginx web server
     hosts: nginx-web
-    become: yes
+    become: true
     become_method: su
     tasks:
 
@@ -16,13 +16,30 @@
           state: present
           update_cache: true
 
-      - name: copy local files serve conf
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: "{{ root_dir }}/nginx-web/nginx-site-config.nginx", dest: '/etc/nginx/sites-enabled/files-serve'}
+      - name: Delate default site
+        file: 
+          path: /etc/nginx/sites-enabled/default
+          state: absent
 
-      - name: restart nginx
-        systemd:
-          name: nginx.service
-          state: restarted
-          enabled: yes
+      - name: copy web conf
+        copy:
+          src: "{{ root_dir }}/nginx-web/nginx-site-config.nginx"
+          dest: '/etc/nginx/sites-enabled/files-serve'
+
+      - name: Create /data/images directory
+        file: 
+          path: /data/images
+          state: directory
+          
+      - name: downloading example images
+        get_url:
+          url: "{{item}}"
+          mode: '0755'
+          force: no
+          dest: /data/images/
+        loop:
+        - 'https://cdn.discordapp.com/attachments/716803899931230229/998573689060741120/unknown.png'
+        - 'https://cdn.discordapp.com/attachments/716803899931230229/998575534718074981/unknown.gif'
+
+      - name: reload nginx
+        shell: /usr/sbin/nginx -s reload

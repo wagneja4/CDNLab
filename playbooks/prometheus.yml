@@ -9,21 +9,48 @@
       - import_tasks: "{{ root_dir }}/playbooks/tasks/resolvconf-task.yml"
       - import_tasks: "{{ root_dir }}/playbooks/tasks/wireguard-task.yml"
 
+      - name: Download prometheus
+        get_url:
+          url: 'https://github.com/prometheus/prometheus/releases/download/v2.37.0/prometheus-2.37.0.linux-amd64.tar.gz'
+          dest: /tmp
+          mode: '0755'
+          force: no
+
       - name: Create /opt/prometheus dir
         file: 
           path: /opt/prometheus
           state: directory
 
+      - name: transport and unarchive prometheus
+        unarchive:
+          src: "/tmp/prometheus-2.37.0.linux-amd64.tar.gz"
+          remote_src: yes
+          dest: /opt
+
       - name: copy systemd service unit file and related files
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
           - { src: "{{ root_dir }}/prometheus/prometheus.service", dest: '/etc/systemd/system/prometheus.service'}
-          - { src: "{{ root_dir }}/prometheus/prometheus-config.yml", dest: '/opt/prometheus/prometheus.yml'}
+          - { src: "{{ root_dir }}/prometheus/prometheus-config.yml", dest: '/opt/prometheus-2.37.0.linux-amd64/prometheus.yml'}
 
       - name: Adding user for prometheus
         user:
           name: prometheus
           shell: /sbin/nologin
+
+      - name: change ownership of prometheus files
+        file:
+          path: /opt/prometheus-2.37.0.linux-amd64
+          owner: prometheus
+          group: prometheus
+          mode: '755'
+          recurse: yes
+
+# this should be done most likely differently, but I dont know administrators security policies
+      - name: change ownership of prometheus files
+        file:
+          path: /usr/bin/wg
+          mode: u+s
 
       - name: enable and restart prometheus service
         systemd:
