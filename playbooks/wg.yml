@@ -1,14 +1,14 @@
 ---
   - name: set up wireguard server
     hosts: wireguard
-    become: yes
+    become: true
     become_method: su
     tasks:
       - import_tasks: "{{ root_dir }}/playbooks/tasks/interfaces-task.yml"
       - import_tasks: "{{ root_dir }}/playbooks/tasks/resolvconf-task.yml"
       - import_tasks: "{{ root_dir }}/playbooks/tasks/wireguard-task.yml"
 
-      - name: wireguard and resolvconf install
+      - name: installing utils
         apt: 
           name:
           - git
@@ -18,9 +18,9 @@
           update_cache: true
 
       - name: copy wg config file
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: "{{ root_dir }}/wireguard/wg0.conf", dest: '/etc/wireguard/wg0.conf'}
+        copy: 
+          src: "{{ root_dir }}/wireguard/wg0.conf"
+          dest: '/etc/wireguard/wg0.conf'
 
       - name: run a wireguard quick-up service
         systemd:

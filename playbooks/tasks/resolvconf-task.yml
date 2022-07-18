@@ -1,4 +1,6 @@
 ---
+# I didnt manage to force resolvconf to update /etc/resolf.conf on reboot. This could be problematic, because name resolution breaks on every reboot.
+# I think I have used best practices for using resolvconf, I am not sure how to solve this without oneshot service on boot, which would be awkward.
   - name: intall resolvconf
     apt: 
       name:
@@ -6,7 +8,7 @@
       state: present
       update_cache: true
 
-  - name: copy resolve conf file, and service file
+  - name: copy resolve conf files
     copy: src={{ item.src}} dest={{item.dest}}
     with_items:
       - { src: "{{root_dir}}/resolvconf/common-resolve.base", dest: '/etc/resolvconf/resolv.conf.d/base'}

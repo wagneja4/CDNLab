@@ -16,10 +16,10 @@
           state: present
           update_cache: true
           
-      - name: copy local files serve conf
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: "{{ root_dir }}/nginx-proxy/nginx-proxy-site.nginx", dest: '/etc/nginx/sites-enabled/proxy-site'}
+      - name: copy proxy site conf
+        copy:
+          src: "{{ root_dir }}/nginx-proxy/nginx-proxy-site.nginx"
+          dest: '/etc/nginx/sites-enabled/proxy-site'
  
       - name: Delate default site
         file: 
@@ -59,10 +59,10 @@
           recurse: yes
 
       - name: copy exporter service file
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: "{{ root_dir }}/nginx-proxy/prom-nginx-exporter.service", dest: '/etc/systemd/system/prom-nginx-exporter.service'}
- 
+        copy: 
+          src: "{{ root_dir }}/nginx-proxy/prom-nginx-exporter.service"
+          dest: '/etc/systemd/system/prom-nginx-exporter.service'
+
       - name: run a prometheus exporter for nginx
         systemd:
           name: prom-nginx-exporter.service

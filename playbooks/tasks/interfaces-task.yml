@@ -1,4 +1,6 @@
 ---
+# As of now, interfaces are configured to override existing settings and they assign static ip.
+# But this is somewhat awkward, because I assume static ips are not available. Good idea would be to implement dynamic dns for public facing ips.
   - name: copy interfaces
     copy: src={{item.src}} dest={{item.dest}}
     loop:

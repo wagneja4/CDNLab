@@ -21,13 +21,13 @@
           path: /opt/prometheus
           state: directory
 
-      - name: transport and unarchive prometheus
+      - name: unarchive prometheus
         unarchive:
           src: "/tmp/prometheus-2.37.0.linux-amd64.tar.gz"
           remote_src: yes
           dest: /opt
 
-      - name: copy systemd service unit file and related files
+      - name: copy prometheus service file and related files
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
           - { src: "{{ root_dir }}/prometheus/prometheus.service", dest: '/etc/systemd/system/prometheus.service'}
@@ -47,7 +47,7 @@
           recurse: yes
 
 # this should be done most likely differently, but I dont know administrators security policies
-      - name: change ownership of prometheus files
+      - name: add setuid to wg, so exporter can see data
         file:
           path: /usr/bin/wg
           mode: u+s

@@ -1,5 +1,6 @@
 ---
-  - name: install tar for unarchive, install jdk for kafka
+# Could implement more friendly name for kafka directory, but unarchive doesnt allow changing names on untaring the files. Would have to probably 'mv'.
+  - name: install tar for unarchive
     apt: 
       name:
       - tar
@@ -18,7 +19,7 @@
       path: /opt/kafka
       state: directory
 
-  - name: transport and unarchive kafka
+  - name: unarchive kafka
     unarchive:
       src: "/tmp/kafka_2.13-3.2.0.tgz"
       remote_src: yes

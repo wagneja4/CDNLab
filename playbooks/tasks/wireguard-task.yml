@@ -1,4 +1,5 @@
 ---
+# There should be better way for handling wireguard intranet vpns. There should be way set up a mechanism of automatic peer handling, so peers are not hard coded.
   - name: install wireguard
     apt: 
       name:
@@ -6,12 +7,12 @@
       state: present
       update_cache: true
 
-  - name: copy wg config files
+  - name: copy wg config file
     copy: 
       src: "{{root_dir}}/{{instanceName}}/wg0.conf"
       dest: '/etc/wireguard/wg0.conf'
 
-  - name: Inline broker id
+  - name: Inline endpoint ip
     lineinfile:
       path: /etc/wireguard/wg0.conf
       regexp: '^Endpoint'

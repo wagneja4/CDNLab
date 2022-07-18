@@ -9,9 +9,9 @@
       - import_tasks: "{{ root_dir }}/playbooks/tasks/unarchive-kafka-task.yml"
 
       - name: copy zookeeper services
-        copy: src={{ item.src}} dest={{item.dest}}
-        with_items:
-          - { src: "{{ root_dir }}/kafka/zookeeper.service", dest: '/etc/systemd/system/zookeeper.service'}
+        copy: 
+          src: "{{ root_dir }}/kafka/zookeeper.service"
+          dest: '/etc/systemd/system/zookeeper.service'
 
       - name: Adding user for kafka (for group)
         user:
