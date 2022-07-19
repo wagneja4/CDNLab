@@ -4,8 +4,9 @@
     become: true
     become_method: su
     tasks:
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/interfaces-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/resolvconf-task.yml"
+    
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/networkd-task.yml"
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/resolved-task.yml"
       - import_tasks: "{{ root_dir }}/playbooks/tasks/unarchive-kafka-task.yml"
 
       - name: copy zookeeper services

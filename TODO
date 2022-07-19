@@ -1,6 +1,5 @@
-sanitize repository
-add readme and comments
+symlink from resolvconf to resolvctl?
+
 implement the last subtask, logging
-add pictures download to nginx local dir serve
 rewrite interfaces for dhcp..? (dns problem..)
 review

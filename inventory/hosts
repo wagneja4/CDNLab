@@ -1,7 +1,7 @@
 [wireguard]
-192.168.122.221 instanceName=wireguard
+192.168.122.252 instanceName=wireguard
 [bind]
-192.168.122.61 instanceName=bind
+192.168.122.79 instanceName=bind
 [nginx-web]
 192.168.122.129 instanceName=nginx-web
 [nginx-proxy]
@@ -12,7 +12,7 @@
 192.168.122.80 instanceName=kafka1 zookeeperIP=localhost
 
 [kafka]
-192.168.122.80 brokerId=0 zookeeperIP=192.168.122.80 instanceName=kafka1
-192.168.122.223 brokerId=1 zookeeperIP=192.168.122.80 instanceName=kafka2
-192.168.122.105 brokerId=2 zookeeperIP=192.168.122.80 instanceName=kafka3
+192.168.122.154 brokerId=0 zookeeperIP=192.168.122.80 instanceName=kafka1
+192.168.122.106 brokerId=1 zookeeperIP=192.168.122.80 instanceName=kafka2
+#192.168.122.105 brokerId=2 zookeeperIP=192.168.122.80 instanceName=kafka3
 
