@@ -1,0 +1,36 @@
+---
+  - name: copy networkd conf file
+    copy: 
+      src: "{{root_dir}}/networkd/common.network"
+      dest: '/etc/systemd/network/enp1s0.network'
+
+  - name: Inline ip to networkd file
+    lineinfile:
+      path: '/etc/systemd/network/enp1s0.network'
+      regexp: '^Address='
+      line: Address={{ansible_default_ipv4.address}}/24
+
+  - name: Inline DNS to networkd file
+    lineinfile:
+      path: '/etc/systemd/network/enp1s0.network'
+      regexp: '^DNS='
+      line: DNS=192.168.122.1
+
+  - name: Inline Gateway to networkd file
+    lineinfile:
+      path: '/etc/systemd/network/enp1s0.network'
+      regexp: '^Gateway='
+      line: Gateway=192.168.122.1
+
+
+#
+  - name: Delate default interfaces
+    file: 
+      path: /etc/network/interfaces
+      state: absent
+
+  - name: enable and restart networkd
+    systemd:
+      name: systemd-networkd.service
+      state: restarted
+      enabled: yes

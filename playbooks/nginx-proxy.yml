@@ -26,11 +26,21 @@
           path: /etc/nginx/sites-enabled/default
           state: absent
 
-      - name: reload nginx
-        shell: /usr/sbin/nginx -s reload
-          
+      - name: Inline static ip for upstream server
+        lineinfile:
+          path: '/etc/nginx/sites-enabled/proxy-site'
+          regexp: 'server nginx-web.lab;'
+          line: "server 10.128.1.13;" # ! IP IS HARDCODED! HAD ISSUES WITH NGINX RESOLVING DNS
+
+
+      - name: enable and restart networkd
+        systemd:
+          name: nginx.service
+          state: restarted
+          enabled: yes
+
       - name: make /opt/nginx dir
-        ansible.builtin.file:
+        file:
           path: /opt/nginx
           state: directory
 
