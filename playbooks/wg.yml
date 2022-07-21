@@ -64,6 +64,11 @@
 
       - name: change ownership of exporter files
         file:
+          path: /usr/bin/wg
+          mode: u+s
+
+      - name: change ownership of exporter files
+        file:
           path: /opt/prometheus_wireguard_exporter
           owner: wg_exporter
           group: wg_exporter
