@@ -7,7 +7,7 @@
     
       - import_tasks: "{{ root_dir }}/playbooks/tasks/networkd-task.yml"
       - import_tasks: "{{ root_dir }}/playbooks/tasks/resolved-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/unarchive-kafka-task.yml"
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/unarchive-zookeeper-task.yml"
 
       - name: installing jre 
         apt: 
@@ -22,7 +22,7 @@
           state: directory
           recurse: yes
 
-      - name: TODO_ ID FILE
+      - name: creating /data/zookeeper
         file:
           path: /data/zookeeper
           state: directory
@@ -38,7 +38,7 @@
 
       - name: Creating a zookeeper config file
         copy:
-          dest: /opt/kafka_2.13-3.2.0/config/zookeeper.properties
+          dest: /opt/apache-zookeeper-3.8.0-bin/conf/zoo.cfg
           content: |
             tickTime=2000
             dataDir=/data/zookeeper
@@ -49,6 +49,7 @@
             server.1=192.168.122.106:2888:3888
             server.2=192.168.122.157:2888:3888
             server.3=192.168.122.126:2888:3888
+            metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider
 
       - name: copy zookeeper services
         copy: 
