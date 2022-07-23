@@ -1,0 +1,10 @@
+[Unit]
+Description= a zookeeper cluster node service
+After=network.target
+[Service]
+ExecStart=/opt/apache-zookeeper-3.8.0-bin/bin/zkServer.sh start-foreground
+ExecStop=/bin/kill "$MAINPID"
+Type=simple
+User=zookeeper
+[Install]
+WantedBy=multi-user.target
