@@ -18,7 +18,7 @@
 
       - name: change ownership of kafka files
         file:
-          path: /opt/kafka
+          path: /opt/kafka_2.13-3.2.0
           owner: kafka
           group: kafka
           mode: '775'
