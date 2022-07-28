@@ -51,7 +51,6 @@
         git:
           repo: https://github.com/MindFlavor/prometheus_wireguard_exporter.git
           dest: /opt/prometheus_wireguard_exporter
-          single_branch: yes
           version: master
 
       - name: compile exporter 
