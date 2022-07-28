@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+
+import subprocess
+import json
+import re # regex
+import datetime
+import os
+
+#txt = "interface: wg0\n  public key: pfZsFXsdW2HsfseqeMrQuhyFCRQOYBsToYmeDDZ/3gY=\n  private key: (hidden)\n  listening port: 55555\n\npeer: ZHWKer3asqxhITJQjrOWb0CX1LtF/kNM0lyv01sMi2w=\n  endpoint: 192.168.122.243:55555\n  allowed ips: 10.128.1.0/24\n  transfer: 0 B received, 43.65 KiB sent\n  persistent keepalive: every 25 seconds"
+
+time_now = datetime.datetime.now()
+
+wg_output = subprocess.run(['wg'], capture_output=True)
+wg_output = str(wg_output)
+#wg_output = str(proc.stdout.read())
+
+#re.findall(r'endpoint:\s*(\d+.\d+.\d+.\d+:\d+)', wg_output)
+reg = re.findall(r'endpoint:\s*(\d+.\d+.\d+.\d+:\d+)', wg_output)
+json_object = json.dumps({'date' : time_now.isoformat(),'wg_connected_ips': reg})
+
+#print(json_object)
+
+if not os.path.exists('/var/log/foreign'):
+    os.makedirs('/var/log/foreign')
+
+with open("/var/log/foreign/wireguard.json", 'a') as f:
+    f.write(json_object + '\n')

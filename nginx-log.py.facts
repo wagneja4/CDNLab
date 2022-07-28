@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+
+import subprocess
+import json
+import re # regex
+import requests
+import datetime
+import os
+
+time_now = datetime.datetime.now()
+
+#stub = "Active connections: 291\nserver accepts handled requests\n 16630948 16630948 31070465\nReading: 6 Writing: 179 Waiting: 106"
+url = 'http://nginx-proxy.lab:8080/stub_status'
+#nginx-proxy.lab
+stub_text = requests.get(url).text
+
+date_ = subprocess.Popen(['date'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+active_connections = int(re.findall('Active connections: ([0-9]+)', stub_text)[0])
+
+accepts, handled, requests_ = re.findall(r"server accepts handled requests\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)", stub_text)[0]
+accepts, handled, requests_ = int(accepts), int(handled), int(requests_)
+
+reading = int(re.findall('Reading: ([0-9]+)', stub_text)[0])
+writing = int(re.findall('Writing: ([0-9]+)', stub_text)[0])
+waiting = int(re.findall('Waiting: ([0-9]+)', stub_text)[0])
+
+json_object = json.dumps({'date' : time_now.isoformat(), \
+                        'active_connections': active_connections,\
+                        'accepts': accepts,\
+                        'handled': handled,\
+                        'requests': requests_,\
+                        'reading': reading,\
+                        'writing': writing,\
+                        'waiting': waiting})
+
+print(json_object)
+
+if not os.path.exists('/var/log/foreign'):
+    os.makedirs('/var/log/foreign')
+
+with open("/var/log/foreign/nginx.json", 'a') as f:
+    f.write(json_object + '\n')
