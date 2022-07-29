@@ -1,10 +1,10 @@
 #!/bin/bash
 
 ansible-galaxy collection install ansible.posix
-
+#
 USER_NAME=user
 INVENTORY_PATH=./inventory/hosts
-WIREGUARD_IP=192.168.122.239
+WIREGUARD_IP=192.168.122.22
 ANSIBLE_PASSWORD=password
 BECOME_PASSWORD=password
 

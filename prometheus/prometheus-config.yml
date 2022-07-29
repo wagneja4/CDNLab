@@ -23,15 +23,21 @@ rule_files:
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
   - job_name: "wireguard"
-
     static_configs:
       - targets: 
         - wg.lab:9586
     metrics_path: /metrics
 
   - job_name: "nginx"
-
     static_configs:
       - targets: 
         - nginx-proxy.lab:9113
+    metrics_path: /metrics
+
+  - job_name: "zookeeper"
+    static_configs:
+      - targets: 
+        - zookeeper1.lab:7000
+        - zookeeper2.lab:7000
+        - zookeeper3.lab:7000
     metrics_path: /metrics
