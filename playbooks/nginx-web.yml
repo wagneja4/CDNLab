@@ -43,3 +43,6 @@
 
       - name: reload nginx
         shell: /usr/sbin/nginx -s reload
+          
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/reboot-task.yml"
+      

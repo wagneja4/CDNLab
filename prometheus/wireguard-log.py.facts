@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+
+import subprocess
+import json
+import re # regex
+import datetime
+import os
+
+time_now = datetime.datetime.now()
+
+wg_output = subprocess.run(['wg'], capture_output=True)
+wg_output = str(wg_output)
+
+reg = re.findall(r'endpoint:\s*(\d+.\d+.\d+.\d+:\d+)', wg_output)
+json_object = json.dumps({'date' : time_now.isoformat(),'wg_connected_ips': reg})
+
+print(json_object)
+
+#if not os.path.exists('/var/log/foreign'):
+#    os.makedirs('/var/log/foreign')
+
+#with open("/var/log/foreign/wireguard.json", 'a') as f:
+#    f.write(json_object + '\n')
+#    print("writen?")

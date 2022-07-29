@@ -1,0 +1,9 @@
+[Unit]
+Description= a logging service for nginx metrics
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ansible nginx-proxy -m script -a "/opt/monitoring/nginx-log.py.facts" -i "/opt/monitoring/hosts" --user user -b --become-method=su -e "ansible_password=password ansible_become_password=password"
+
+[Install]
+Also=log-monitor.target

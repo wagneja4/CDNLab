@@ -33,11 +33,11 @@ json_object = json.dumps({'date' : time_now.isoformat(), \
                         'ten_minute_average': ten_avg,\
                         'processes_running': processes_running,\
                         'processes_total': processes_total})
-#print(json_object)
+print(json_object)
 
-if not os.path.exists('/var/log/foreign'):
-    os.makedirs('/var/log/foreign')
+#if not os.path.exists('/var/log/foreign'):
+#    os.makedirs('/var/log/foreign')
 
 
-with open("/var/log/foreign/monitor.json", 'a') as f:
-    f.write(json_object + '\n')
+#with open("/var/log/foreign/monitor.json", 'a') as f:
+#    f.write(json_object + '\n')

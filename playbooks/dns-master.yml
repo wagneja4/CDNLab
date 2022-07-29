@@ -34,4 +34,5 @@
         loop:
           - "systemctl restart named"
 
-    
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/reboot-task.yml"
+      

@@ -1,0 +1,5 @@
+[Unit]
+Description=Logging service target
+Requires=multi-user.target
+Wants=monitor-wireguard.service monitor-nginx.service monitor-load.service
+After=monitor-wireguard.service monitor-nginx.service monitor-load.service

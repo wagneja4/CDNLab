@@ -1,0 +1,6 @@
+[wireguard]
+wg.lab
+[prometheus]
+prometheus.lab
+[nginx-proxy]
+nginx-proxy.lab

@@ -86,4 +86,6 @@
           state: restarted
           enabled: yes
           daemon_reload: yes
-          
+                    
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/reboot-task.yml"
+      

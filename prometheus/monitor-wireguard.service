@@ -1,0 +1,9 @@
+[Unit]
+Description= a logging service for wireguard metrics
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ansible wireguard -m script -a "/opt/monitoring/wireguard-log.py.facts" -i "/opt/monitoring/hosts" --user user -b --become-method=su -e "ansible_password=password ansible_become_password=password"
+
+[Install]
+Also=log-monitor.target

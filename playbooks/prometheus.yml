@@ -58,3 +58,45 @@
           state: restarted
           enabled: yes
           daemon_reload: yes
+
+      - name: install ansible, sshpass
+        apt: 
+          name:
+          - ansible
+          - sshpass
+          state: present
+          update_cache: true
+
+      - name: Create /opt/monitoring dir
+        file: 
+          path: /opt/monitoring
+          state: directory
+
+      - name: Create /etc/ansible dir
+        file: 
+          path: /etc/ansible
+          state: directory
+
+      - name: copy logging service file and related files
+        copy: src={{item.src}} dest={{item.dest}}
+        with_items:
+          - { src: "{{ root_dir }}/prometheus/load-log.py.facts", dest: '/opt/monitoring/load-log.py.facts'}
+          - { src: "{{ root_dir }}/prometheus/nginx-log.py.facts", dest: '/opt/monitoring/nginx-log.py.facts'}
+          - { src: "{{ root_dir }}/prometheus/wireguard-log.py.facts", dest: '/opt/monitoring/wireguard-log.py.facts'}
+          - { src: "{{ root_dir }}/prometheus/log-monitor.timer", dest: '/etc/systemd/system/log-monitor.timer'}
+          - { src: "{{ root_dir }}/prometheus/log-monitor.target", dest: '/etc/systemd/system/log-monitor.target'}
+          - { src: "{{ root_dir }}/prometheus/monitor-load.service", dest: '/etc/systemd/system/monitor-load.service'}
+          - { src: "{{ root_dir }}/prometheus/monitor-nginx.service", dest: '/etc/systemd/system/monitor-nginx.service'}
+          - { src: "{{ root_dir }}/prometheus/monitor-wireguard.service", dest: '/etc/systemd/system/monitor-wireguard.service'}
+          - { src: "{{ root_dir }}/prometheus/hosts", dest: '/opt/monitoring/hosts'}
+          - { src: "{{ root_dir }}/prometheus/ansible.cfg", dest: '/etc/ansible/ansible.cfg'}
+
+      - name: enable and start monitoring timer
+        systemd:
+          name: log-monitor.timer
+          state: started
+          enabled: yes
+          daemon_reload: yes
+
+      - import_tasks: "{{ root_dir }}/playbooks/tasks/reboot-task.yml"
+      
