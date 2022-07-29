@@ -3,5 +3,7 @@ This is wagneja4's configuration of some popular services. The infrastructure is
 
 Files which should be modified before use:\
 ./inventory/hosts ~ modify the ips of hosts and ip variables.\
-batch-playbook.bash ~ relevant env. variables, especially wireguard ip
+batch-playbook.bash ~ relevant env. variables\
+./ansible/variables/ correct ips
 
+Then there is script batch-playbook.sh provided for easy replication of all containers.
