@@ -5,12 +5,12 @@
     become_method: su
     tasks:
     
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/networkd-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/resolved-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/wireguard-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/unarchive-zookeeper-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/networkd-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/resolved-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/wireguard-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/unarchive-zookeeper-task.yml"
 
-      - name: installing jre 
+      - name: Installing jre 
         apt: 
           name:
           - default-jre
@@ -23,7 +23,7 @@
           state: directory
           recurse: yes
 
-      - name: creating /data/zookeeper
+      - name: Creating /data/zookeeper
         file:
           path: /data/zookeeper
           state: directory
@@ -49,7 +49,7 @@
             server.3={{zookeeperIP3}}:2888:3888
             metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider
 
-      - name: copy zookeeper services
+      - name: Copy zookeeper services
         copy: 
           src: "{{ root_dir }}/zookeeper/zookeeper.service"
           dest: '/etc/systemd/system/zookeeper.service'
@@ -66,7 +66,7 @@
           groups: kafka
           shell: /sbin/nologin
 
-      - name: change ownership of zookeeper files
+      - name: Change ownership of zookeeper files
         file:
           path: "{{item}}"
           owner: zookeeper
@@ -77,12 +77,12 @@
           - /opt/kafka_2.13-3.2.0
           - /data/zookeeper
 
-      - name: enable and restart zookeeper service
+      - name: Enable and restart zookeeper service
         systemd:
           name: zookeeper.service
           state: restarted
           enabled: yes
           daemon_reload: yes
                     
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/reboot-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/reboot-task.yml"
       

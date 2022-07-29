@@ -1,4 +1,7 @@
 ---
+  - name: Include wireguard variables
+    include_vars:
+      file: "{{root_dir}}/ansible/variables/wireguard.vars"
 # There should be better way for handling wireguard intranet vpns. There should be way set up a mechanism of automatic peer handling, so peers are not hard coded.
   - name: install wireguard
     apt: 
@@ -23,4 +26,3 @@
       name: wg-quick@wg0.service
       state: restarted
       enabled: yes
-# RESTART RESOLVED..? PROBABLY NOT CUZ OF POSTUP

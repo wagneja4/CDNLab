@@ -5,9 +5,9 @@
     become_method: su
     tasks:
 
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/networkd-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/resolved-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/wireguard-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/networkd-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/resolved-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/wireguard-task.yml"
 
       - name: Download prometheus
         get_url:
@@ -21,13 +21,13 @@
           path: /opt/prometheus
           state: directory
 
-      - name: unarchive prometheus
+      - name: Unarchive prometheus
         unarchive:
           src: "/tmp/prometheus-2.37.0.linux-amd64.tar.gz"
           remote_src: yes
           dest: /opt
 
-      - name: copy prometheus service file and related files
+      - name: Copy prometheus service file and related files
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
           - { src: "{{ root_dir }}/prometheus/prometheus.service", dest: '/etc/systemd/system/prometheus.service'}
@@ -38,7 +38,7 @@
           name: prometheus
           shell: /sbin/nologin
 
-      - name: change ownership of prometheus files
+      - name: Change ownership of prometheus files
         file:
           path: /opt/prometheus-2.37.0.linux-amd64
           owner: prometheus
@@ -46,20 +46,20 @@
           mode: '755'
           recurse: yes
 
-# this should be done most likely differently, but I dont know administrators security policies
-      - name: add setuid to wg, so exporter can see data
+# This should be done differently. Likely chowning wg binary to a group, but I dont know administrators security policies...
+      - name: Add setuid to wg, so exporter can see data
         file:
           path: /usr/bin/wg
           mode: u+s
 
-      - name: enable and restart prometheus service
+      - name: Enable and restart prometheus service
         systemd:
           name: prometheus.service
           state: restarted
           enabled: yes
           daemon_reload: yes
 
-      - name: install ansible, sshpass
+      - name: Install ansible, sshpass
         apt: 
           name:
           - ansible
@@ -77,7 +77,7 @@
           path: /etc/ansible
           state: directory
 
-      - name: copy logging service file and related files
+      - name: Copy logging service file and related files
         copy: src={{item.src}} dest={{item.dest}}
         with_items:
           - { src: "{{ root_dir }}/prometheus/load-log.py.facts", dest: '/opt/monitoring/load-log.py.facts'}
@@ -91,12 +91,12 @@
           - { src: "{{ root_dir }}/prometheus/hosts", dest: '/opt/monitoring/hosts'}
           - { src: "{{ root_dir }}/prometheus/ansible.cfg", dest: '/etc/ansible/ansible.cfg'}
 
-      - name: enable and start monitoring timer
+      - name: Enable and start monitoring timer
         systemd:
           name: log-monitor.timer
           state: started
           enabled: yes
           daemon_reload: yes
 
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/reboot-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/reboot-task.yml"
       

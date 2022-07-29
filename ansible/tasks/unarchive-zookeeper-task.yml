@@ -1,5 +1,5 @@
 ---
-# Could implement more friendly name for kafka directory, but unarchive doesnt allow changing names on untaring the files. Would have to probably 'mv'.
+# Could implement more friendly name for zookeeper directory, but unarchive doesnt allow changing names on untaring the files. Would have to probably 'mv'.
   - name: install tar for unarchive
     apt: 
       name:

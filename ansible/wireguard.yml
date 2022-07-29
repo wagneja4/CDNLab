@@ -5,26 +5,27 @@
     become_method: su
     tasks:
     
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/networkd-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/resolved-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/wireguard-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/networkd-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/resolved-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/wireguard-task.yml"
 
-      - name: installing utils
+# needed for exporter
+      - name: Installing utils
         apt: 
           name:
-          - git
-          - curl
-          - build-essential
+          - git 
+          - curl 
+          - build-essential 
           state: present
           update_cache: true
 
-      - name: run a wireguard quick-up service
+      - name: Run a wireguard quick-up service
         systemd:
           name: wg-quick@wg0.service
           state: restarted
           enabled: yes
 
-      - name: set forwarding to 1
+      - name: Set forwarding to 1
         ansible.posix.sysctl:
           name: net.ipv4.ip_forward
           value: '1'
@@ -39,7 +40,7 @@
           mode: '0755'
           force: 'yes'
 
-      - name: install rust/cargo
+      - name: Install rust/cargo
         shell: /tmp/sh.rustup.rs -y
 
       - name: Get wireguard exporter
@@ -48,7 +49,7 @@
           dest: /opt/prometheus_wireguard_exporter
           version: master
 
-      - name: compile exporter 
+      - name: Compile exporter 
         shell: cargo install --path /opt/prometheus_wireguard_exporter
 
       - name: Adding user for prometheus wg exporter
@@ -56,29 +57,29 @@
           name: wg_exporter
           shell: /sbin/nologin
 
-      - name: change ownership of exporter files
+      - name: Change ownership of exporter files
         file:
           path: /usr/bin/wg
           mode: u+s
 
-      - name: change ownership of exporter files
+      - name: Change ownership of exporter files
         file:
           path: /opt/prometheus_wireguard_exporter
           owner: wg_exporter
           group: wg_exporter
           recurse: yes
 
-      - name: copy exporter service file
+      - name: Copy exporter service file
         copy: 
           src: "{{ root_dir }}/wireguard/prometheus-wg-exporter.service"
           dest: '/etc/systemd/system/prom-wg-exporter.service'
 
-      - name: run a prometheus exporter for wireguard
+      - name: Run a prometheus exporter for wireguard
         systemd:
           name: prom-wg-exporter.service
           state: started
           enabled: yes
           daemon_reload: yes
           
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/reboot-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/reboot-task.yml"
       

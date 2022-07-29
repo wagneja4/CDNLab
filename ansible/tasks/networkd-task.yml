@@ -1,4 +1,8 @@
 ---
+  - name: Include networking variables
+    include_vars:
+      file: "{{root_dir}}/ansible/variables/networking.vars"
+
   - name: copy networkd conf file
     copy: 
       src: "{{root_dir}}/networkd/common.network"
@@ -14,16 +18,15 @@
     lineinfile:
       path: '/etc/systemd/network/enp1s0.network'
       regexp: '^DNS='
-      line: DNS=192.168.122.1
+      line: DNS={{default_dns}}
 
   - name: Inline Gateway to networkd file
     lineinfile:
       path: '/etc/systemd/network/enp1s0.network'
       regexp: '^Gateway='
-      line: Gateway=192.168.122.1
+      line: Gateway={{default_gateway}}
 
-
-#
+#needed absent, otherwise this file interferes with networkd configuration
   - name: Delate default interfaces
     file: 
       path: /etc/network/interfaces

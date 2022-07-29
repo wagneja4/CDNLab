@@ -5,18 +5,18 @@
     become_method: su
     tasks:
 
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/networkd-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/resolved-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/wireguard-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/networkd-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/resolved-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/wireguard-task.yml"
 
-      - name: installs nginx
+      - name: Installs nginx
         apt: 
           name:
           - nginx
           state: present
           update_cache: true
           
-      - name: copy proxy site conf
+      - name: Copy proxy site configuration file
         copy:
           src: "{{ root_dir }}/nginx-proxy/nginx-proxy-site.nginx"
           dest: '/etc/nginx/sites-enabled/proxy-site'
@@ -30,16 +30,15 @@
         lineinfile:
           path: '/etc/nginx/sites-enabled/proxy-site'
           regexp: 'server nginx-web.lab;'
-          line: "server 10.128.1.13;" # ! IP IS HARDCODED! HAD ISSUES WITH NGINX RESOLVING DNS
+          line: "server 10.128.1.13;" # ! IP IS HARDCODED (should be value of nginx-web.lab)! HAD ISSUES WITH NGINX RESOLVING DNS. Should be a domain name
 
-
-      - name: enable and restart networkd
+      - name: Enable and restart networkd
         systemd:
           name: nginx.service
           state: restarted
           enabled: yes
 
-      - name: make /opt/nginx dir
+      - name: Make /opt/nginx dir
         file:
           path: /opt/nginx
           state: directory
@@ -50,7 +49,7 @@
           dest: /tmp
           mode: '0755'
 
-      - name: unarchive exporter
+      - name: Unarchive exporter
         unarchive:
           src: "/tmp/nginx-prometheus-exporter_0.10.0_linux_amd64.tar.gz"
           remote_src: yes
@@ -61,24 +60,24 @@
           name: wg_exporter
           shell: /sbin/nologin
 
-      - name: change ownership of exporter files
+      - name: Change ownership of exporter files
         file:
           path: /opt/nginx
           owner: wg_exporter
           group: wg_exporter
           recurse: yes
 
-      - name: copy exporter service file
+      - name: Copy exporter service file
         copy: 
           src: "{{ root_dir }}/nginx-proxy/prom-nginx-exporter.service"
           dest: '/etc/systemd/system/prom-nginx-exporter.service'
 
-      - name: run a prometheus exporter for nginx
+      - name: Run a prometheus exporter for nginx
         systemd:
           name: prom-nginx-exporter.service
           state: restarted
           enabled: yes
           daemon_reload: yes
           
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/reboot-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/reboot-task.yml"
       

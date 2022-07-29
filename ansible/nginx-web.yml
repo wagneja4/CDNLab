@@ -5,11 +5,11 @@
     become_method: su
     tasks:
 
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/networkd-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/resolved-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/wireguard-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/networkd-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/resolved-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/wireguard-task.yml"
 
-      - name: installs nginx
+      - name: Installs nginx
         apt: 
           name:
           - nginx
@@ -21,7 +21,7 @@
           path: /etc/nginx/sites-enabled/default
           state: absent
 
-      - name: copy web conf
+      - name: Copy website configuration file
         copy:
           src: "{{ root_dir }}/nginx-web/nginx-site-config.nginx"
           dest: '/etc/nginx/sites-enabled/files-serve'
@@ -31,7 +31,7 @@
           path: /data/images
           state: directory
           
-      - name: downloading example images
+      - name: Download example images
         get_url:
           url: "{{item}}"
           mode: '0755'
@@ -41,8 +41,8 @@
         - 'https://cdn.discordapp.com/attachments/716803899931230229/998573689060741120/unknown.png'
         - 'https://cdn.discordapp.com/attachments/716803899931230229/998575534718074981/unknown.gif'
 
-      - name: reload nginx
+      - name: Reload nginx
         shell: /usr/sbin/nginx -s reload
           
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/reboot-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/reboot-task.yml"
       

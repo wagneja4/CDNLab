@@ -5,12 +5,12 @@
     become: true
     become_method: su
     tasks:
-    
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/networkd-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/resolved-task.yml"
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/wireguard-task.yml"
 
-      - name: installs bind
+      - import_tasks: "{{ root_dir }}/ansible/tasks/networkd-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/resolved-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/wireguard-task.yml"
+
+      - name: Installs bind
         apt: 
           name:
           - bind9
@@ -22,17 +22,18 @@
           path: /etc/bind/zones
           state: directory
 
-      - name: copy bind config files
+      - name: Copy bind config files
         copy: src={{ item.src}} dest={{item.dest}}
         with_items:
           - { src: "{{ root_dir }}/bind/named.conf.local", dest: '/etc/bind/named.conf.local'}
           - { src: "{{ root_dir }}/bind/named.conf.options", dest: '/etc/bind/zones/named.conf.options'}
           - { src: "{{ root_dir }}/bind/zones/db.lab", dest: '/etc/bind/zones/db.lab'}
 
-      - name: restart named for dns record update (its ok, we dont have a secondary)
-        command: "{{item}}"
-        loop:
-          - "systemctl restart named"
+      - name: Restart named for dns record update (its ok, we dont have a secondary)
+        systemd:
+          name: named.service
+          state: restarted
+          enabled: yes
 
-      - import_tasks: "{{ root_dir }}/playbooks/tasks/reboot-task.yml"
+      - import_tasks: "{{ root_dir }}/ansible/tasks/reboot-task.yml"
       
