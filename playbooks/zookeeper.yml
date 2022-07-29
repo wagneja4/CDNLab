@@ -28,9 +28,6 @@
           path: /data/zookeeper
           state: directory
           recurse: yes
-#{% for host in groups['app_servers'] %}
-#   {{ hostvars[host]['ansible_facts']['eth0']['ipv4']['address'] }}
-#{% endfor %}
 
       - name: Creating a zookeeper ID file
         copy:

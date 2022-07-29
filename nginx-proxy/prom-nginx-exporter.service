@@ -1,11 +1,13 @@
 [Unit]
 Description= a prometheus exporter for nginx
 After=network.target
+
 [Service]
 ExecStart=/opt/nginx/nginx-prometheus-exporter
 ExecStop=/bin/kill "$MAINPID"
 Type=simple
 Restart=always
 User=wg_exporter
+
 [Install]
 WantedBy=multi-user.target

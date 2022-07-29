@@ -9,7 +9,7 @@
 
   - name: copy wg config file
     copy: 
-      src: "{{root_dir}}/{{instanceName}}/wg0.conf"
+      src: "{{root_dir}}/wireguard/confs/{{instanceName}}-wg0.conf"
       dest: '/etc/wireguard/wg0.conf'
 
   - name: Inline endpoint ip

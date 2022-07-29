@@ -9,9 +9,9 @@
 [prometheus]
 192.168.122.135 instanceName=prometheus
 [zookeeper]
-192.168.122.103 instanceName=kafka1 zookeeperID=1
-192.168.122.55 instanceName=kafka2 zookeeperID=2
-192.168.122.62 instanceName=kafka3 zookeeperID=3
+192.168.122.103 instanceName=zookeeper1 zookeeperID=1
+192.168.122.55 instanceName=zookeeper1 zookeeperID=2
+192.168.122.62 instanceName=zookeeper1 zookeeperID=3
 [zookeeper:vars]
 zookeeperIP1=192.168.122.103
 zookeeperIP2=192.168.122.55

@@ -1,8 +1,0 @@
----
-# As of now, interfaces are configured to override existing settings and they assign static ip.
-# But this is somewhat awkward, because I assume static ips are not available. Good idea would be to implement dynamic dns for public facing ips.
-  - name: copy interfaces
-    copy: src={{item.src}} dest={{item.dest}}
-    loop:
-      - { src: "{{root_dir}}/interfaces/{{instanceName}}-enp1s0", dest: '/etc/network/interfaces.d/enp1s0' }
-      - { src: "{{root_dir}}/interfaces/common-interfaces", dest: '/etc/network/interfaces' }

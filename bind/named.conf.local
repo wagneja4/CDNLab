@@ -11,9 +11,3 @@ zone "lab" {
 	type master;
 	file "/etc/bind/zones/db.lab";
 };
-
-zone "128.10.in-addr.arpa" {
-	
-	type master;
-	file "/etc/bind/zones/db.10.128";
-};
