@@ -1,22 +1,22 @@
 [bind]
 192.168.122.106 instanceName=bind
 [wireguard]
-192.168.122.100 instanceName=wireguard
+192.168.122.225 instanceName=wireguard
 [nginx-web]
-192.168.122.210 instanceName=nginx-web
+192.168.122.154 instanceName=nginx-web
 [nginx-proxy]
-192.168.122.52 instanceName=nginx-proxy nginxWebIP=192.168.122.210
+192.168.122.226 instanceName=nginx-proxy nginxWebIP=192.168.122.154
 [prometheus]
-192.168.122.32 instanceName=prometheus
+192.168.122.168 instanceName=prometheus
 [zookeeper]
-192.168.122.211 instanceName=zookeeper1 zookeeperID=1
-192.168.122.254 instanceName=zookeeper2 zookeeperID=2
-192.168.122.189 instanceName=zookeeper3 zookeeperID=3
-192.168.122.133 instanceName=zookeeper4 zookeeperID=4
-192.168.122.193 instanceName=zookeeper5 zookeeperID=5
+192.168.122.159 instanceName=zookeeper1 zookeeperID=1
+192.168.122.209 instanceName=zookeeper2 zookeeperID=2
+192.168.122.98 instanceName=zookeeper3 zookeeperID=3
+192.168.122.210 instanceName=zookeeper4 zookeeperID=4
+192.168.122.235 instanceName=zookeeper5 zookeeperID=5
 [zookeeper:vars]
-zookeeperIP1=192.168.122.211
-zookeeperIP2=192.168.122.254
-zookeeperIP3=192.168.122.189
-zookeeperIP4=192.168.122.133
-zookeeperIP5=192.168.122.193
+zookeeperIP1=192.168.122.159
+zookeeperIP2=192.168.122.209
+zookeeperIP3=192.168.122.98
+zookeeperIP4=192.168.122.210
+zookeeperIP5=192.168.122.235

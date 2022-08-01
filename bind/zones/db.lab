@@ -12,7 +12,6 @@ $TTL	604800
 ;@ORIGIN ns.lab.
 lab.		IN	NS	ns.lab.
 ns			IN	A	10.128.1.11
-ansible		IN	A	10.128.1.12
 wg			IN	A	10.128.1.10
 nginx-web	IN	A	10.128.1.13
 nginx-proxy	IN	A	10.128.1.14
