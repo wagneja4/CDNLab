@@ -47,6 +47,8 @@
             server.1={{zookeeperIP1}}:2888:3888
             server.2={{zookeeperIP2}}:2888:3888
             server.3={{zookeeperIP3}}:2888:3888
+            server.4={{zookeeperIP4}}:2888:3888
+            server.5={{zookeeperIP5}}:2888:3888
             metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider
 
       - name: Copy zookeeper services

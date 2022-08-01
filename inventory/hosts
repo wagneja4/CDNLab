@@ -1,24 +1,22 @@
 [bind]
 192.168.122.106 instanceName=bind
 [wireguard]
-192.168.122.22 instanceName=wireguard
+192.168.122.100 instanceName=wireguard
 [nginx-web]
-192.168.122.100 instanceName=nginx-web
+192.168.122.210 instanceName=nginx-web
 [nginx-proxy]
-192.168.122.87 instanceName=nginx-proxy nginxWebIP=192.168.122.100
+192.168.122.52 instanceName=nginx-proxy nginxWebIP=192.168.122.210
 [prometheus]
-192.168.122.135 instanceName=prometheus
+192.168.122.32 instanceName=prometheus
 [zookeeper]
-192.168.122.103 instanceName=zookeeper1 zookeeperID=1
-192.168.122.55 instanceName=zookeeper1 zookeeperID=2
-192.168.122.62 instanceName=zookeeper1 zookeeperID=3
+192.168.122.211 instanceName=zookeeper1 zookeeperID=1
+192.168.122.254 instanceName=zookeeper2 zookeeperID=2
+192.168.122.189 instanceName=zookeeper3 zookeeperID=3
+192.168.122.133 instanceName=zookeeper4 zookeeperID=4
+192.168.122.193 instanceName=zookeeper5 zookeeperID=5
 [zookeeper:vars]
-zookeeperIP1=192.168.122.103
-zookeeperIP2=192.168.122.55
-zookeeperIP3=192.168.122.62
-#PASS INITIAL IP AS VARIABLE AND CONFIGURE IT AS STATIC IP
-#[kafka]
-#192.168.122.106 brokerId=0 zookeeperIP=192.168.122.106 instanceName=kafka1
-#192.168.122.157 brokerId=1 zookeeperIP=192.168.122.106 instanceName=kafka2
-#192.168.122.126 brokerId=2 zookeeperIP=192.168.122.106 instanceName=kafka3
-
+zookeeperIP1=192.168.122.211
+zookeeperIP2=192.168.122.254
+zookeeperIP3=192.168.122.189
+zookeeperIP4=192.168.122.133
+zookeeperIP5=192.168.122.193
