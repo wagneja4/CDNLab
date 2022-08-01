@@ -9,7 +9,7 @@ Files which needs to be modified before use:
 Then there is script batch-playbook.sh provided for easy replication of all containers.
 
 ### Wireguard
-All containers are connected with central node, which then forwards traffic to other nodes on the network (by allowed ip range). Other communication goes via default route. WG keys are staticaly pregenerated (room for improvement, it probably should be generated anew with each deploy)
+All containers are connected with central node, which then forwards traffic to other nodes on the network (by allowed ip range). Other connections (outside VPN ip range) goes via default route. WG keys are staticaly pregenerated (room for improvement, it probably should be generated anew with each deploy)
 
 ### Prometheus
 The Prometheus nodes scrapes other nodes (Wireguard node, Nginx-proxy node and Zookeeper nodes). The web interface is on \<PrometheusIP\>:9090. **This node also has local logging** of some metrics of other containers via Ansible, which retreaves JSON with data and logs it in journalctl. The current implementation is with ansible.builtin.script. The logging to journalctl should be changed to logging to local append only file for easier parsing...

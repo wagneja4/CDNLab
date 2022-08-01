@@ -6,7 +6,7 @@ alerting:
   alertmanagers:
     - static_configs:
         - targets:
-.
+
 rule_files:
 
 scrape_configs:
@@ -30,4 +30,6 @@ scrape_configs:
         - zookeeper1.lab:7000
         - zookeeper2.lab:7000
         - zookeeper3.lab:7000
+        - zookeeper4.lab:7000
+        - zookeeper5.lab:7000
     metrics_path: /metrics

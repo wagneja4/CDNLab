@@ -20,3 +20,5 @@ prometheus	IN	A	10.128.1.15
 zookeeper1	IN	A	10.128.1.16
 zookeeper2	IN	A	10.128.1.17
 zookeeper3	IN	A	10.128.1.18
+zookeeper1	IN	A	10.128.1.19
+zookeeper2	IN	A	10.128.1.20
